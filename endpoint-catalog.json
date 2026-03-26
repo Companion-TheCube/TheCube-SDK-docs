@@ -1,0 +1,147 @@
+{
+    "catalogVersion": "2026-03-26",
+    "source": "Companion-TheCube---Core local API contract",
+    "transports": [
+        {
+            "name": "http",
+            "protocol": "http",
+            "host": "127.0.0.1",
+            "port": 55280,
+            "description": "Loopback TCP HTTP transport for local or explicitly exposed CORE access."
+        },
+        {
+            "name": "unix_socket_http",
+            "protocol": "http+unix",
+            "socketPathEnv": "IPC_SOCKET_PATH",
+            "defaultSocketPath": "cube.sock",
+            "description": "HTTP over a Unix domain socket for trusted local clients."
+        }
+    ],
+    "dynamicInterfacePathPattern": "/{interfaceName}-{endpointName}",
+    "endpointMetadata": {
+        "tupleName": "HttpEndPointData_t",
+        "fields": [
+            {
+                "name": "flags",
+                "description": "Bit flags combining visibility and HTTP verb."
+            },
+            {
+                "name": "action",
+                "description": "Handler implementation bound by CORE."
+            },
+            {
+                "name": "endpointName",
+                "description": "The endpoint suffix used with the interface name to form the path."
+            },
+            {
+                "name": "requestSchema",
+                "description": "JSON-schema-like payload description used for discovery and request validation."
+            },
+            {
+                "name": "description",
+                "description": "Human-readable endpoint description."
+            }
+        ]
+    },
+    "discoveryEndpoints": [
+        {
+            "name": "getEndpoints",
+            "path": "/getEndpoints",
+            "method": "GET",
+            "visibility": "public",
+            "description": "Returns the registered API surface grouped by interface.",
+            "responseShape": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "params": {
+                                "type": [
+                                    "object",
+                                    "array",
+                                    "string",
+                                    "number",
+                                    "boolean",
+                                    "null"
+                                ]
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "public": {
+                                "type": "string",
+                                "enum": [
+                                    "true",
+                                    "false"
+                                ]
+                            },
+                            "endpoint_type": {
+                                "type": "string",
+                                "enum": [
+                                    "GET",
+                                    "POST"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "name",
+                            "params",
+                            "description",
+                            "public",
+                            "endpoint_type"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "getCubeSocketPath",
+            "path": "/getCubeSocketPath",
+            "method": "GET",
+            "visibility": "public",
+            "description": "Returns the resolved Unix socket path for the local IPC transport.",
+            "responseShape": {
+                "type": "object",
+                "properties": {
+                    "cube_socket_path": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "cube_socket_path"
+                ]
+            }
+        },
+        {
+            "name": "openapi",
+            "path": "/openapi.json",
+            "method": "GET",
+            "visibility": "public",
+            "description": "Returns an OpenAPI-like document built from registered endpoint metadata.",
+            "responseShape": {
+                "type": "object",
+                "properties": {
+                    "openapi": {
+                        "type": "string"
+                    },
+                    "info": {
+                        "type": "object"
+                    },
+                    "paths": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "openapi",
+                    "info",
+                    "paths"
+                ]
+            }
+        }
+    ]
+}
