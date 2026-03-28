@@ -4,7 +4,6 @@ Shared contract docs for all language SDKs.
 
 ## Documents
 
-- [Overview](README.md)
 - [Transports](transports.md)
 - [Endpoints](endpoints.md)
 - [Authentication](authentication.md)
